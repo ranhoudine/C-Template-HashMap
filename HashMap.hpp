@@ -15,7 +15,7 @@ using std::vector;
 using std::pair;
 
 template<class KeyT, class ValueT>
-class HashMap // at first working with ints
+class HashMap
 {
  public:
   /*** Constructors and Destructors ***/
@@ -94,8 +94,8 @@ class HashMap // at first working with ints
     return HashMap<KeyT, ValueT>::const_iterator (nullptr, this, 0, 0);
   }
  private:
-  unsigned int _capacity;
-  unsigned int _size;
+  int _capacity;
+  int _size;
   double upper_load_factor = UPPER_LOAD_FACTOR;
   double lower_load_factor = LOWER_LOAD_FACTOR;
   vector<pair<KeyT, ValueT>> *buckets;
