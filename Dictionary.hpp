@@ -25,7 +25,8 @@ bool Dictionary::erase (const string &key)
   throw InvalidKey(KEY_NOT_FOUND_MSG);
 }
 void
-Dictionary::update (HashMap::ConstIterator &start, const HashMap::ConstIterator &end)
+Dictionary::update (HashMap::ConstIterator &start,
+                    const HashMap::ConstIterator &end)
 {
   while (start != end && start.operator->() != nullptr)
   {

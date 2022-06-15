@@ -100,7 +100,6 @@ class HashMap // at first working with ints
   double lower_load_factor = LOWER_LOAD_FACTOR;
   vector<pair<KeyT, ValueT>> *buckets;
   std::hash<KeyT> value_hash;
-  bool contained_in (const HashMap<KeyT, ValueT> &other) const;
   /*** private methods ***/
 
   void create_buckets ();
@@ -123,9 +122,11 @@ class HashMap<KeyT, ValueT>::ConstIterator
 {
  public:
   /*** Constructors ***/
-  ConstIterator (const pair<KeyT, ValueT> *_p, const HashMap<KeyT, ValueT> *map, int i_w,
-                 int b_i) : p (_p), associated_map (map), index_within_bucket
-      (i_w), bucket_index (b_i)
+  ConstIterator (const pair<KeyT, ValueT> *_p,
+                 const HashMap<KeyT, ValueT> *map, int i_w,
+                 int b_i) : p (_p), associated_map (map),
+                            index_within_bucket
+                                (i_w), bucket_index (b_i)
   {}
 
   /*** Typedefs***/
@@ -136,9 +137,10 @@ class HashMap<KeyT, ValueT>::ConstIterator
   typedef std::ptrdiff_t difference_type;
   typedef std::forward_iterator_tag iterator_category;
 
+  typedef ConstIterator const_iterator;
   /*** Operators ***/
 
-  ConstIterator &operator++ ()
+  const_iterator &operator++ ()
   {
     if ((int) index_within_bucket + 1 < associated_map->bucket_size (p->first))
     {
@@ -163,9 +165,10 @@ class HashMap<KeyT, ValueT>::ConstIterator
     this->index_within_bucket = 0;
     return *this;
   }
-  ConstIterator operator++ (int)
+  const_iterator operator++ (int)
   {
-    HashMap<KeyT, ValueT>::ConstIterator it (p, associated_map, index_within_bucket,
+    HashMap<KeyT, ValueT>::ConstIterator it (p, associated_map,
+                                             index_within_bucket,
                                              bucket_index);
     if (index_within_bucket + 1 < associated_map->bucket_size (p->first)) //
       // if it's not the last pair in the bucket
@@ -199,7 +202,7 @@ class HashMap<KeyT, ValueT>::ConstIterator
   {
     return !(operator== (other));
   }
-  value_type operator* ()
+  reference operator* ()
   {
     return *p;
   }
@@ -211,8 +214,8 @@ class HashMap<KeyT, ValueT>::ConstIterator
  private:
   const pair<KeyT, ValueT> *p;
   const HashMap<KeyT, ValueT> *associated_map;
-  unsigned int index_within_bucket;
-  unsigned int bucket_index;
+  int index_within_bucket;
+  int bucket_index;
 
 };
 
@@ -267,7 +270,7 @@ void HashMap<KeyT, ValueT>::re_hash ()
   for (unsigned int i = 0; i < original_capacity; i++)
   {
     vector<pair<KeyT, ValueT>> v = original_buckets[i];
-    for (int j = 0; j < v.size (); ++j)
+    for (size_t j = 0; j < v.size (); ++j)
     {
       unsigned int hash_value = hash (v[j].first);
       buckets[hash_value].push_back ({v[j].first, v[j].second});
@@ -450,23 +453,7 @@ bool HashMap<KeyT, ValueT>::operator== (const HashMap<KeyT, ValueT> &other)
   }
   return true;
 }
-template<class KeyT, class ValueT>
-bool HashMap<KeyT, ValueT>::contained_in (const HashMap<KeyT, ValueT>
-                                          &other) const
-{
-  for (const auto &p: *this)
-  {
-    if (!other.contains_key (p.first))
-    {
-      return false;
-    }
-    if (p.second != other.at (p.first))
-    {
-      return false;
-    }
-  }
-  return true;
-}
+
 template<class KeyT, class ValueT>
 bool HashMap<KeyT, ValueT>::operator!= (const HashMap<KeyT, ValueT> &other)
 {
