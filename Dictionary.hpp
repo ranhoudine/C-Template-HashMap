@@ -1,27 +1,34 @@
 #include "HashMap.hpp"
 #include <iterator>
+#include <vector>
 #ifndef _DICTIONARY_HPP_
 #define _DICTIONARY_HPP_
+#define INVALID_KEY "Invalid key"
 using std::string;
-using string_iterator = std::iterator<std::forward_iterator_tag, pair<string,
-string>>
+
 class InvalidKey : std::invalid_argument
 {
  public:
+  InvalidKey(): InvalidKey (INVALID_KEY){}
   explicit InvalidKey (const string &what) : std::invalid_argument (what)
   {}
 };
+
 class Dictionary : public HashMap<string, string>
 {
  public:
+
   bool erase (const string &key) override;
-  void update (string_iterator start, string_iterator end)
+  template<typename K>
+  void update (K start, K end)
   {
-    for (string_iterator it = start; it != end; ++it)
+    while (start != end && start.operator->() != nullptr)
     {
-      insert((*it).first, (*it).second);
+      insert (start->first, start->second);
+      ++start;
     }
   }
+
 
 };
 bool Dictionary::erase (const string &key)

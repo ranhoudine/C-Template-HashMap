@@ -59,9 +59,15 @@ class HashMap
   /*** Forward declarations ***/
   class ConstIterator;
 
-  /*** typedefs ***/
-  typedef ConstIterator const_iterator;
+  /*** Typedefs***/
 
+  typedef const pair<KeyT, ValueT> value_type;
+  typedef const pair<KeyT, ValueT> &reference;
+  typedef const pair<KeyT, ValueT> *pointer;
+  typedef std::ptrdiff_t difference_type;
+  typedef std::forward_iterator_tag iterator_category;
+
+  typedef ConstIterator const_iterator;
   /*** Begins and Ends ***/
 
   const_iterator begin () const
@@ -94,6 +100,9 @@ class HashMap
   {
     return HashMap<KeyT, ValueT>::const_iterator (nullptr, this, 0, 0);
   }
+
+
+
  private:
   int _capacity;
   int _size;
@@ -131,15 +140,7 @@ class HashMap<KeyT, ValueT>::ConstIterator
                                 (i_w), bucket_index (b_i)
   {}
 
-  /*** Typedefs***/
 
-  typedef const pair<KeyT, ValueT> value_type;
-  typedef const pair<KeyT, ValueT> &reference;
-  typedef const pair<KeyT, ValueT> *pointer;
-  typedef std::ptrdiff_t difference_type;
-  typedef std::forward_iterator_tag iterator_category;
-
-  typedef ConstIterator const_iterator;
   /*** Operators ***/
 
   const_iterator &operator++ ()
