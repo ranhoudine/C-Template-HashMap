@@ -22,7 +22,7 @@ class HashMap
   /*** Constructors and Destructors ***/
 
   HashMap ();
-  HashMap (vector<KeyT> keys, vector<ValueT> values);
+  HashMap (const vector<KeyT>& keys, const vector<ValueT>& values);
   HashMap (const HashMap<KeyT, ValueT> &map);
   ~HashMap ();
 
@@ -246,7 +246,8 @@ unsigned int HashMap<KeyT, ValueT>::hash (KeyT key) const
 }
 
 template<class KeyT, class ValueT>
-HashMap<KeyT, ValueT>::HashMap (vector<KeyT> keys, vector<ValueT> values)
+HashMap<KeyT, ValueT>::HashMap (const vector<KeyT>& keys, const
+vector<ValueT>& values)
 {
   if (keys.size () != values.size ())
   {
@@ -258,7 +259,7 @@ HashMap<KeyT, ValueT>::HashMap (vector<KeyT> keys, vector<ValueT> values)
   create_buckets ();
   for (size_t i = 0; i < keys.size (); ++i)
   {
-    insert (keys[i], values[i]);
+    operator[](keys[i]) = values[i];
   }
 }
 
