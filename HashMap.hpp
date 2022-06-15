@@ -6,7 +6,8 @@
 #define DEFAULT_CAPACITY 16
 #define LOWER_LOAD_FACTOR 0.25
 #define UPPER_LOAD_FACTOR 0.75
-#define BAD_VECTORS_LENGTH_MSG "Constructor received vectors of different lengths"
+#define BAD_VECTORS_LENGTH_MSG "Constructor received"\
+" vectors of different lengths"
 #define KEY_NOT_FOUND_MSG "Key not found"
 
 #include <vector>
@@ -115,7 +116,8 @@ class HashMap
     return num;
   }
   void adjust_capacity_to_balance_load_factor ();
-  bool load_factor_okay ();
+  bool beyond_upper_load_factor ();
+  bool below_lower_load_factor ();
 };
 template<class KeyT, class ValueT>
 class HashMap<KeyT, ValueT>::ConstIterator
@@ -339,7 +341,7 @@ bool HashMap<KeyT, ValueT>::insert (const KeyT &key, const ValueT &value)
     unsigned int hash_value = hash (key);
     buckets[hash_value].push_back ({key, value});
     _size++;
-    if (!load_factor_okay ())
+    if (beyond_upper_load_factor())
     {
       re_hash ();
     }
@@ -393,7 +395,7 @@ bool HashMap<KeyT, ValueT>::erase (const KeyT &key)
       {
         buckets[hash_value].erase (it);
         _size--;
-        if (!load_factor_okay ())
+        if (below_lower_load_factor())
         {
           re_hash ();
         }
@@ -497,11 +499,16 @@ void HashMap<KeyT, ValueT>::adjust_capacity_to_balance_load_factor ()
     }
   }
 }
+
 template<class KeyT, class ValueT>
-bool HashMap<KeyT, ValueT>::load_factor_okay ()
+bool HashMap<KeyT, ValueT>::beyond_upper_load_factor ()
 {
-  return (get_load_factor () <= upper_load_factor && get_load_factor () >=
-                                                     lower_load_factor);
+  return get_load_factor() > upper_load_factor;
+}
+template<class KeyT, class ValueT>
+bool HashMap<KeyT, ValueT>::below_lower_load_factor ()
+{
+  return (get_load_factor() < lower_load_factor);
 }
 
 #endif //_HASHMAP_HPP_
