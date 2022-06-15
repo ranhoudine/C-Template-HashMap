@@ -229,7 +229,7 @@ template<class KeyT, class ValueT>
 void HashMap<KeyT, ValueT>::create_buckets ()
 {
   buckets = new vector<pair<KeyT, ValueT>>[_capacity];
-  for (unsigned int i = 0; i < _capacity; ++i)
+  for (int i = 0; i < _capacity; ++i)
   {
     buckets[i] = vector<pair<KeyT, ValueT>> ();
   }
