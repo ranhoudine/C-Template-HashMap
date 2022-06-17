@@ -118,7 +118,7 @@ class HashMap
     unsigned int hash_value = hash (key);
     return (int) buckets[hash_value].size ();
   }
-  bool erase (const KeyT &key)
+  virtual bool erase (const KeyT &key)
   {
     if (contains_key (key))
     {
@@ -284,7 +284,15 @@ class HashMap
   {
     return (get_load_factor () < lower_load_factor);
   }
-
+  int first_power_of_2_larger_than (int size)
+  {
+    int num = 1;
+    while (num < size)
+    {
+      num *= 2;
+    }
+    return num;
+  }
   /*** Forward declarations ***/
  public:
   class ConstIterator;

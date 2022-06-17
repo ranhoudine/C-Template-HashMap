@@ -22,7 +22,14 @@ class Dictionary : public HashMap<string, string>
   Dictionary (const vector<string>& keys, const vector<string>& values) :
   HashMap<string,string> (keys, values)
   {}
-  bool erase (const string &key) override;
+  bool erase (const string &key) override
+  {
+    if (HashMap::erase (key))
+    {
+      return true;
+    }
+    throw InvalidKey (KEY_NOT_FOUND_MSG);
+  }
   template<typename K>
   void update (K start, K end)
   {
@@ -34,13 +41,6 @@ class Dictionary : public HashMap<string, string>
   }
 
 };
-bool Dictionary::erase (const string &key)
-{
-  if (HashMap::erase (key))
-  {
-    return true;
-  }
-  throw InvalidKey (KEY_NOT_FOUND_MSG);
-}
+
 
 #endif //_DICTIONARY_HPP_
