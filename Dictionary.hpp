@@ -22,6 +22,12 @@ class Dictionary : public HashMap<string, string>
   Dictionary (const vector<string>& keys, const vector<string>& values) :
   HashMap<string,string> (keys, values)
   {}
+
+  /***
+   * overrides erase of hashmap. throws an error if the key is not found
+   * @param key
+   * @return
+   */
   bool erase (const string &key) override
   {
     if (HashMap::erase (key))
@@ -30,6 +36,13 @@ class Dictionary : public HashMap<string, string>
     }
     throw InvalidKey (KEY_NOT_FOUND_MSG);
   }
+  /***
+   * function template for updating the dictionary using two iterators of
+   * <string, string> pairs.
+   * @tparam K
+   * @param start
+   * @param end
+   */
   template<typename K>
   void update (K start, K end)
   {
