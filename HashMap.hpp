@@ -20,6 +20,14 @@ class HashMap
 {
  public:
   /*** Constructors and Destructors ***/
+
+  /***
+   * Ctor that creates a new hashmap with the given keys and values.
+   * Each key in the keys vector is mapped to its corresponding value in
+   * the values vector. Both vectors have to be of equal length.
+   * @param keys
+   * @param values
+   */
   HashMap (const vector<KeyT> &keys, const vector<ValueT> &values)
   {
     if (keys.size () != values.size ())
@@ -35,6 +43,11 @@ class HashMap
       operator[] (keys[i]) = values[i];
     }
   }
+
+  /***
+   * Copy constructor
+   * @param map
+   */
   HashMap (const HashMap<KeyT, ValueT> &map)
   {
     _size = map._size;
@@ -45,6 +58,9 @@ class HashMap
       buckets[i] = map.buckets[i];
     }
   }
+  /***
+   * Default  constructor
+   */
   HashMap () : HashMap (vector<KeyT> (), vector<ValueT> ())
   {}
   virtual ~HashMap ()
@@ -53,6 +69,13 @@ class HashMap
   }
 
   /*** Methods ***/
+
+  /***
+   * returns a reference to the value mapped to the key introduced. throws a
+   * runtime error if the key is not found in the map.
+   * @param key
+   * @return
+   */
   ValueT &at (const KeyT &key)
   {
     unsigned int hash_value = hash (key);
@@ -65,6 +88,12 @@ class HashMap
     }
     throw std::runtime_error (KEY_NOT_FOUND_MSG);
   }
+  /***
+   * returns a const reference to the value mapped to the key introduced.
+   * throws and error if the key is not found in the map.
+   * @param key
+   * @return
+   */
   const ValueT &at (const KeyT &key) const
   {
     unsigned int hash_value = hash (key);
@@ -77,6 +106,13 @@ class HashMap
     }
     throw std::runtime_error (KEY_NOT_FOUND_MSG);
   }
+  /***
+   * Inserts a new key-value pair to the map.
+   * @param key
+   * @param value
+   * @returns true if the key wasn't already in the map and the key and
+   * value were added successfully. false otherwise.
+   */
   bool insert (const KeyT &key, const ValueT &value)
   {
     if (!contains_key (key))
@@ -92,6 +128,12 @@ class HashMap
     }
     return false;
   }
+
+  /***
+   * checks if the given key exists in the map.
+   * @param key
+   * @return
+   */
   bool contains_key (const KeyT &key) const
   {
     unsigned int hash_value = hash (key);
@@ -105,10 +147,21 @@ class HashMap
     }
     return false;
   }
+  /***
+   * returns the map load factor as defined in the pdf
+   * @return
+   */
   double get_load_factor () const
   {
     return (double) _size / (double) _capacity;
   }
+
+  /***
+   * returns the bucket size of the given key. throws a runtime error if the
+   * key is not present in the database.
+   * @param key
+   * @return
+   */
   int bucket_size (const KeyT &key) const
   {
     if (!contains_key (key))
@@ -118,6 +171,12 @@ class HashMap
     unsigned int hash_value = hash (key);
     return (int) buckets[hash_value].size ();
   }
+
+  /***
+   *
+   * @param key
+   * @return
+   */
   virtual bool erase (const KeyT &key)
   {
     if (contains_key (key))
@@ -140,6 +199,12 @@ class HashMap
     }
     return false;
   }
+  /***
+   * returns the bucket of the given key. throws an error if the key is not
+   * found.
+   * @param key
+   * @return
+   */
   int bucket_index (const KeyT &key) const
   {
     if (contains_key (key))
@@ -149,6 +214,10 @@ class HashMap
     }
     throw std::runtime_error (KEY_NOT_FOUND_MSG);
   }
+
+  /***
+   * clears the map of its content.
+   */
   void clear ()
   {
     for (int i = 0; i < _capacity; ++i)
@@ -157,20 +226,35 @@ class HashMap
       buckets[i].clear ();
     }
   }
+
+  /***
+   * returns the size of the map.
+   * @return
+   */
   int size () const
   {
     return _size;
   }
+  /***
+   * returns the capacity of the map.
+   * @return
+   */
   int capacity () const
   {
     return _capacity;
   }
+
+  /***
+   * checks if the map is empty.
+   * @return
+   */
   bool empty () const
   {
     return (_size == 0);
   }
 
   /*** Operators ***/
+
   HashMap<KeyT, ValueT> &operator= (const HashMap<KeyT, ValueT> &other)
   {
     if (this == &other)
@@ -187,6 +271,7 @@ class HashMap
     }
     return *this;
   }
+
   ValueT &operator[] (const KeyT &key)
   {
     if (contains_key (key))
@@ -196,6 +281,7 @@ class HashMap
     insert (key, ValueT ());
     return at (key);
   }
+
   bool operator== (const HashMap<KeyT, ValueT> &other)
   {
     if (size () != other.size ())
@@ -213,6 +299,7 @@ class HashMap
     }
     return true;
   }
+
   bool operator!= (const HashMap<KeyT, ValueT> &other)
   {
     return (!operator== (other));
@@ -220,6 +307,10 @@ class HashMap
 
   /*** Private methods***/
  private:
+
+  /***
+   * initializes the map buckets as vectors of <key,value> pairs.
+   */
   void create_buckets ()
   {
     buckets = new vector<pair<KeyT, ValueT>>[_capacity];
@@ -228,11 +319,22 @@ class HashMap
       buckets[i] = vector<pair<KeyT, ValueT>> ();
     }
   }
+  /***
+   * returns the hash value that is also the index of the given key.
+   * firstly hashes the key using std::hash and than uses modulo arithmetics
+   * to further hash the key to its bucket.
+   * @param key
+   * @returns the hash-code corresponding to the given key in the map.
+   */
   unsigned int hash (KeyT key) const
   {
     unsigned int hash_value = value_hash (key);
     return hash_value & (_capacity - 1);
   }
+  /***
+   * re-hashes the map. This function is called if the load factor exceeds
+   * its limits.
+   */
   void re_hash ()
   {
     vector<pair<KeyT, ValueT>> *original_buckets = buckets;
@@ -252,6 +354,9 @@ class HashMap
     }
     delete[] original_buckets;
   }
+  /***
+   * adjusts the capacity to maintain the load factor within its limits.
+   */
   void adjust_capacity_to_balance_load_factor ()
   {
     if (_size == 0)
@@ -276,14 +381,25 @@ class HashMap
       }
     }
   }
+
+  /***
+   * checks whether the load factor exceeds the upper limit.
+   * @return
+   */
   bool beyond_upper_load_factor ()
   {
     return get_load_factor () > upper_load_factor;
   }
+
+  /***
+   * checks whether the load factor exceeds the lower limit.
+   * @return
+   */
   bool below_lower_load_factor ()
   {
     return (get_load_factor () < lower_load_factor);
   }
+
   int first_power_of_2_larger_than (int size)
   {
     int num = 1;
@@ -308,6 +424,7 @@ class HashMap
   typedef ConstIterator const_iterator;
 
   /*** Begins and Ends ***/
+
   const_iterator begin () const
   {
     if (empty ())
@@ -363,9 +480,9 @@ class HashMap
 
     const_iterator &operator++ ()
     {
-      if ((int) index_within_bucket + 1
+      if ( index_within_bucket + 1
           < associated_map->bucket_size (p->first))
-      {
+      { // checks if the current pair is the last in the bucket
         index_within_bucket++;
         p = &(associated_map->buckets[bucket_index][index_within_bucket]);
         return *this;
@@ -374,11 +491,11 @@ class HashMap
       bucket_index++;
       while (bucket_index < associated_map->_capacity &&
              associated_map->buckets[bucket_index].empty ())
-      {
+      { // progresses the bucket index to the next non-empty bucket
         bucket_index++;
       }
       if (bucket_index < associated_map->_capacity)
-      {
+      { // checks if all buckets were iterated over already
         p = &(associated_map->buckets[bucket_index][index_within_bucket]);
         return *this;
       }
@@ -392,8 +509,8 @@ class HashMap
       HashMap<KeyT, ValueT>::ConstIterator it (p, associated_map,
                                                index_within_bucket,
                                                bucket_index);
-      if (index_within_bucket + 1 < associated_map->bucket_size (p->first)) //
-        // if it's not the last pair in the bucket
+      if (index_within_bucket + 1 < associated_map->bucket_size (p->first))
+        // checks if the current pair is the last in the bucket
       {
         index_within_bucket++;
         p = &(associated_map->buckets[bucket_index][index_within_bucket]);
@@ -403,11 +520,11 @@ class HashMap
       bucket_index++;
       while (bucket_index < associated_map->_capacity &&
              associated_map->buckets[bucket_index].empty ())
-      {
+      { // progresses the bucket index to the next non-empty bucket
         bucket_index++;
       }
       if (bucket_index + 1 <= associated_map->_capacity)
-      {
+      { // checks if all the buckets were iterated over already
         p = &(associated_map->buckets[bucket_index][index_within_bucket]);
         return it;
       }
