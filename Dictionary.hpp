@@ -18,7 +18,7 @@ class InvalidKey : public std::invalid_argument
 class Dictionary : public HashMap<string, string>
 {
  public:
-  Dictionary (){}
+  Dictionary ()= default;
   Dictionary (const vector<string>& keys, const vector<string>& values) :
   HashMap<string,string> (keys, values)
   {}
